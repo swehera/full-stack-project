@@ -13,10 +13,12 @@ import Order from "./pages/Order.jsx";
 import Success from "./pages/Success.jsx";
 import Cancel from "./pages/Cancel.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import { ScrollRestoration } from "react-router-dom";
 
 const RouterLayout = () => {
   return (
     <Layout>
+      <ScrollRestoration />
       <Outlet />
     </Layout>
   );

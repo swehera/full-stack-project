@@ -26,7 +26,7 @@ const Categories = () => {
         <div className="flex items-center justify-between">
           <Title text="Popular categories" />
           <Link
-            to={"/category/tvAndAudio"}
+            to={"/categories/tvAndAudio"}
             className="font-medium relative group overflow-hidden"
           >
             View All Categories{" "}
@@ -38,7 +38,7 @@ const Categories = () => {
       <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-7">
         {categories.map((item) => (
           <Link
-            to={`/category/${item?._base}`}
+            to={`/categories/${item?._base}`}
             key={item?._id}
             className="w-full h-auto relative group overflow-hidden"
           >

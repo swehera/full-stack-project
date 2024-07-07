@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { config } from "../../config";
 import { getData } from "../lib";
+import ProductCard from "./ProductCard";
 
 const bottomNavigation = [
   { title: "Home", link: "/" },
@@ -28,7 +29,25 @@ const bottomNavigation = [
 const Header = () => {
   const [searchText, setSearchText] = useState("");
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
+  //that is for products
+  useEffect(() => {
+    const fetchData = async () => {
+      const endpoint = `${config?.baseUrl}/products`;
+      try {
+        const data = await getData(endpoint);
+        setProducts(data);
+        console.log("data from backend", data);
+      } catch (error) {
+        console.log("data fetching error", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  //that is for categories
   useEffect(() => {
     const fetchData = async () => {
       const endpoint = `${config?.baseUrl}/categories`;
@@ -42,6 +61,18 @@ const Header = () => {
     };
     fetchData();
   }, []);
+
+  // that is for search functionnality
+  useEffect(() => {
+    const filtered = products.filter((item) =>
+      item.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+    console.log("filterd search", filtered);
+    setFilteredProducts(filtered);
+  }, [searchText]);
+
+  // console.log("search text", searchText);
+  console.log("products", products);
   return (
     <div className=" w-full bg-whiteText md:sticky md:top-0 z-50">
       <div className=" max-w-screen-xl mx-auto h-20 flex items-center justify-between px-4 lg:px-0">
@@ -54,16 +85,43 @@ const Header = () => {
         <div className=" hidden md:inline-flex max-w-3xl w-full relative ">
           <input
             type="text"
+            value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder="Search product.."
             className=" w-full flex-1 rounded-full text-gray-900 text-lg placeholder:text-base placeholder:tracking-wide shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:ring-1  focus:ring-darkText sm:text-sm px-4 py-2"
           />
           {searchText ? (
-            <IoClose className=" absolute top-2.5 right-4 text-xl" />
+            <IoClose
+              onClick={() => setSearchText("")}
+              className=" absolute top-2.5 right-4 text-xl"
+            />
           ) : (
             <IoSearchOutline className=" absolute top-2.5 right-4 text-xl" />
           )}
         </div>
+
+        {/* Search product will go here */}
+        {searchText && (
+          <div className=" absolute left-0 top-20 w-full mx-auto max-h-[500px] px-10 py-5 bg-white z-20 overflow-y-scroll text-black shadow-lg shadow-skyText scrollbar-hide">
+            {filteredProducts.length > 0 ? (
+              <div className=" grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
+                {filteredProducts.map((items) => (
+                  <ProductCard items={items} setSearchText={setSearchText} />
+                ))}
+              </div>
+            ) : (
+              <div className=" py-10 bg-gray-50 w-full flex items-center justify-center border border-gray-600 rounded-md">
+                <p className=" text-xl font-normal">
+                  Nothing matched with your search keywords{" "}
+                  <span className=" underline underline-offset-2 decoration-[1px] text-red-500 font-semibold">
+                    ({`${searchText}`})
+                  </span>
+                </p>
+                . please try again
+              </div>
+            )}
+          </div>
+        )}
 
         {/* MenuBar */}
         <div className=" flex items-center gap-x-6 text-2xl">
@@ -108,7 +166,7 @@ const Header = () => {
                 {categories?.map((item) => (
                   <MenuItem key={item?._id}>
                     <Link
-                      to={`/category/${item?._base}`}
+                      to={`/categories/${item?._base}`}
                       className=" flex w-full items-center gap-2 rounded-lg py-2 px-3 data-[focus]:bg-white/20 tracking-wide"
                     >
                       <img

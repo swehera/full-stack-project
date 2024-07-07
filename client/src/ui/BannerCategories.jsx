@@ -59,7 +59,7 @@ const BannerCategories = () => {
         categories.map((item) => (
           <Link
             key={item?._id}
-            to={`category/${item?._base}`}
+            to={`categories/${item?._base}`}
             className="flex items-center gap-x-2 p-1 border border-gray-100 mr-1 flex-1 rounded-md hover:border-skyText hover:shadow-lg"
           >
             {/* Uncomment and ensure image path is correct */}
